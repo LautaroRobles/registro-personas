@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import registropersonas.modelo.Delegacion;
 import registropersonas.modelo.Estado;
-import registropersonas.modelo.Persona;
 import registropersonas.repositorios.DelegacionRepositorio;
-import registropersonas.servicios.dto.DelegacionReporteDTO;
-import registropersonas.servicios.dto.PersonaReporteDTO;
+import registropersonas.dto.DelegacionReporteDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -8,7 +8,7 @@ import registropersonas.modelo.Estado;
 import registropersonas.modelo.Persona;
 import registropersonas.repositorios.DelegacionRepositorio;
 import registropersonas.repositorios.PersonaRepositorio;
-import registropersonas.servicios.dto.PersonaReporteDTO;
+import registropersonas.dto.PersonaReporteDTO;
 
 import java.util.Date;
 import java.util.List;

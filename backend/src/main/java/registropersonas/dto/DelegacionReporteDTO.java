@@ -1,4 +1,4 @@
-package registropersonas.servicios.dto;
+package registropersonas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
