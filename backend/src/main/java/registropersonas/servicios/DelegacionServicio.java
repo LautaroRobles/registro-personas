@@ -1,12 +1,13 @@
 package registropersonas.servicios;
 
+import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import registropersonas.modelo.Delegacion;
 import registropersonas.modelo.Estado;
 import registropersonas.repositorios.DelegacionRepositorio;
-import registropersonas.dto.DelegacionReporteDTO;
+import registropersonas.dto.DelegacionReporte;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,26 +20,22 @@ public class DelegacionServicio {
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public void aprobarDelegacion(Long idDelegacion) {
-        Delegacion delegacion = delegacionRepositorio.findById(idDelegacion).orElse(null);
-        if(delegacion != null) {
-            delegacion.setEstado(Estado.Aprobada);
-            delegacionRepositorio.save(delegacion);
-        }
+    public DelegacionReporte aprobarDelegacion(Long idDelegacion) throws NotFoundException{
+        Delegacion delegacion = delegacionRepositorio.findById(idDelegacion).orElseThrow(() -> new NotFoundException("No se encuentra la delegacion"));
+        delegacion.setEstado(Estado.Aprobada);
+        return modelMapper.map(delegacionRepositorio.save(delegacion), DelegacionReporte.class);
     }
 
-    public void revocarDelegacion(Long idDelegacion) {
-        Delegacion delegacion = delegacionRepositorio.findById(idDelegacion).orElse(null);
-        if(delegacion != null) {
-            delegacion.setEstado(Estado.Rechazada);
-            delegacionRepositorio.save(delegacion);
-        }
+    public DelegacionReporte revocarDelegacion(Long idDelegacion) throws NotFoundException{
+        Delegacion delegacion = delegacionRepositorio.findById(idDelegacion).orElseThrow(() -> new NotFoundException("No se encuentra la delegacion"));
+        delegacion.setEstado(Estado.Rechazada);
+        return modelMapper.map(delegacionRepositorio.save(delegacion), DelegacionReporte.class);
     }
 
-    public List<DelegacionReporteDTO> reporteListadoDelegacion() {
+    public List<DelegacionReporte> reporteListadoDelegacion() {
         List<Delegacion> delegaciones = delegacionRepositorio.findAll();
         return delegaciones.stream().map(delegacion ->
-                modelMapper.map(delegacion, DelegacionReporteDTO.class)
+                modelMapper.map(delegacion, DelegacionReporte.class)
         ).collect(Collectors.toList());
     }
 }

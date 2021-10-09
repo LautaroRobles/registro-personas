@@ -33,6 +33,7 @@ public class TokenProvider {
                 .setIssuer(ISSUER_TOKEN)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS*1000))
                 .compact();
+
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(final String token,

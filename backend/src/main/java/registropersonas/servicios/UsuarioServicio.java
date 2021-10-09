@@ -1,13 +1,12 @@
 package registropersonas.servicios;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import registropersonas.dto.TokenUsuario;
 import registropersonas.modelo.Persona;
 import registropersonas.modelo.Rol;
 import registropersonas.modelo.Usuario;
@@ -32,7 +31,7 @@ public class UsuarioServicio implements UserDetailsService {
 
     private final BuscadorPersonas buscadorPersonas = BuscadorPersonas.getInstancia();
 
-    public Usuario registrarUsuario(String username, String password, String dni) {
+    public Usuario registrarUsuario(String username, String password, String dni) throws NotFoundException {
         PersonaExistente personaExistente = buscadorPersonas.buscarPersonaExistente(dni);
 
         if(personaExistente != null) {
@@ -40,7 +39,7 @@ public class UsuarioServicio implements UserDetailsService {
 
             usuario.setUsername(username);
             usuario.setPassword(passwordEncoder.encode(password));
-            usuario.setRol(Rol.Estandar);
+            usuario.setRol(Rol.ESTANDAR);
 
             usuario = usuarioRepositorio.save(usuario);
 
@@ -55,14 +54,26 @@ public class UsuarioServicio implements UserDetailsService {
 
             return usuario;
         }
-        return null;
+        else {
+            throw new NotFoundException("No se encuentra una persona con ese dni");
+        }
     }
 
+    public String login(String username, String password) throws UsernameNotFoundException {
+        Usuario usuario = loadUserByUsername(username);
+
+        // Check if password is correct
+        if(!passwordEncoder.matches(password, usuario.getPassword())) {
+            throw new UsernameNotFoundException("Usuario o contraseña incorrecta");
+        }
+
+        return TokenProvider.generateToken(usuario);
+    }
 
     @Override
     public Usuario loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepositorio.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("Usuario no existe")
+                () -> new UsernameNotFoundException("Usuario o contraseña incorrecta")
         );
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
@@ -71,19 +82,5 @@ public class UsuarioServicio implements UserDetailsService {
 
         usuario.setAuthorities(authorities);
         return usuario;
-    }
-
-    public TokenUsuario login(String username, String password) {
-        Usuario usuario = loadUserByUsername(username);
-
-        // Check if password is correct
-
-        String token = TokenProvider.generateToken(usuario);
-
-        TokenUsuario tokenUsuario = new TokenUsuario();
-        tokenUsuario.setUsername(username);
-        tokenUsuario.setToken(token);
-
-        return tokenUsuario;
     }
 }

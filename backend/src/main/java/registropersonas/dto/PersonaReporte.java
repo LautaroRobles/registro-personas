@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Getter @Setter
-public class PersonaReporteDTO {
+public class PersonaReporte {
     private Long id;
     private String nombre;
     private String apellido;

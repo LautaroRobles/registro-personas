@@ -6,9 +6,9 @@ import registropersonas.modelo.Estado;
 
 @Getter
 @Setter
-public class DelegacionReporteDTO {
+public class DelegacionReporte {
     private Long id;
-    private PersonaReporteDTO autorizante;
-    private PersonaReporteDTO autoriza;
+    private PersonaReporte autorizante;
+    private PersonaReporte autoriza;
     private Estado estado;
 }
