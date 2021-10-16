@@ -22,36 +22,27 @@ public class PersonaControl {
     private PersonaServicio personaServicio;
 
     @PostMapping("/{idPersona}/actualizar")
-    public ResponseEntity<PersonaReporte> actualizarPersona(@PathVariable Long idPersona, @RequestBody ActualizarPersona actualizarPersona) {
-        try {
-            PersonaReporte personaActualizada = personaServicio.actualizarPersona(
-                    idPersona,
-                    actualizarPersona.getFecha(),
-                    actualizarPersona.getCiudad(),
-                    actualizarPersona.getLocalidad(),
-                    actualizarPersona.getFoto()
-            );
-            return new ResponseEntity<>(personaActualizada, HttpStatus.OK);
-        }
-        catch (NotFoundException exception) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    @ResponseStatus(HttpStatus.OK)
+    PersonaReporte actualizarPersona(@PathVariable Long idPersona, @RequestBody ActualizarPersona actualizarPersona) throws NotFoundException {
+        return personaServicio.actualizarPersona(
+            idPersona,
+            actualizarPersona.getFecha(),
+            actualizarPersona.getCiudad(),
+            actualizarPersona.getLocalidad(),
+            actualizarPersona.getFoto()
+        );
     }
 
     @PostMapping("/{idAutorizante}/autorizar/{idAutoriza}")
-    public ResponseEntity<DelegacionReporte> autorizarPersona(@PathVariable Long idAutorizante, @PathVariable Long idAutoriza) {
-        try {
-            DelegacionReporte delegacionCreada = personaServicio.autorizarPersona(idAutorizante, idAutoriza);
-            return new ResponseEntity<>(delegacionCreada, HttpStatus.CREATED);
-        }
-        catch (NotFoundException exception) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    DelegacionReporte autorizarPersona(@PathVariable Long idAutorizante, @PathVariable Long idAutoriza) throws NotFoundException {
+        return personaServicio.autorizarPersona(idAutorizante, idAutoriza);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
-    public ResponseEntity<List<PersonaReporte>> reporteDelegaciones() {
-        return new ResponseEntity<>(personaServicio.reporteListadoPersonas(), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    List<PersonaReporte> reportePersonas() {
+        return personaServicio.reporteListadoPersonas();
     }
 }
